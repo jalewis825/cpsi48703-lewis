@@ -4,9 +4,7 @@ SERVER = "localhost"
 
 PORT = 18861
 
-   # ------------------- TESTS REMOVE BEFORE TURN IN --------------------------------
-def show_response(label, response):
-    print(f"\n--- {label} ---")
+def display_response(response):
     print(response["message"])
 
     data = response["data"]
@@ -14,70 +12,79 @@ def show_response(label, response):
         return
 
     if isinstance(data, dict):
-        print(data["book_id"],"|", data["title"], "| available:", data["available"])
-    else:
-        for book in data:
-            print(book["book_id"],"|", book["title"], "| available:", book["available"])
-# ---------------------------------------------------------------------------------
+        data = [data]
+
+    for book in data:
+        status = "Available" if book["available"] else "Checked Out"
+        print(f" {book['book_id']} | {book['title']} | {book['author']}| {status}" )
 
 class Client:
 
     def run(self):
 
-        
         connection = None
         
         try:
-
             connection = rpyc.connect(SERVER, PORT)
-
             print("Connected to the RPC server.")
 
-            # response = connection.root.get_all_books()
+            while True:
+                print("\n------Library Menu------")
+                print("1. Display all books")
+                print("2. Search for a book by keyword")
+                print("3. Check availability")
+                print("4. Borrow a book")
+                print("5. Return a book")
+                print("6. View my borrowed books")
+                print("7. Exit")
 
-            # if response["success"] and response["data"]:
-              #  for book in response["data"]:
-               #     print(book["book_id"], book["title"])
-            
-            # ------------------- TESTS REMOVE BEFORE TURN IN --------------------------------
-            show_response("All books", connection.root.get_all_books())
+                choice = input("Enter your choice (1-7): ").strip()
 
-            show_response("Search: gatsby", connection.root.search_book("gatsby"))
-            show_response("Search: AUSTEN", connection.root.search_book("AUSTEN"))
-            show_response("Search: zzz", connection.root.search_book("zzz"))
-            show_response("Search: blank", connection.root.search_book("   "))
+                if choice == "1":
+                    display_response(connection.root.get_all_books())
 
-            show_response("Availability: book01", connection.root.check_availability("book01"))
-            show_response("Availability: Book99", connection.root.check_availability("Book99"))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books("S1001"))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books("s1001"))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books(" "))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books("X101"))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books("S12"))
-            show_response("Check out a book: ", connection.root.borrow_book("S1001", "Book02"))
-            show_response("Return a book: ", connection.root.return_book("S2002", "Book02"))
-            show_response("Return a book: ", connection.root.return_book("S1001", "Book02"))
-            show_response("Total books borrowed: ", connection.root.get_borrowed_books("S1001"))
-            show_response("Return a book: ", connection.root.return_book("S1002", "Book02"))
-            show_response("Return a book: ", connection.root.return_book("S1001", "Book99"))
-            # ---------------------------------------------------------------------------------
+                elif choice == "2":
+                    keyword = input("Enter keyword: ")
+                    display_response(connection.root.search_book(keyword))
+
+                elif choice == "3":
+                    book_id = input("Enter book ID: ")
+                    display_response(connection.root.check_availability(book_id))
+
+                elif choice == "4":
+                    student_id = input("Enter student ID: ") 
+                    book_id = input("Enter book ID: ")
+                    display_response(connection.root.borrow_book(student_id, book_id))
+
+                elif choice == "5":
+                    student_id = input("Enter student ID: ") 
+                    book_id = input("Enter book ID: ")
+                    display_response(connection.root.return_book(student_id, book_id))
+
+                elif choice == "6":
+                    student_id = input("Enter student ID: ")
+                    display_response(connection.root.get_borrowed_books(student_id))
+
+                elif choice == "7":
+                    print("Goodbye.")
+                    break
+
+                else:
+                    print("Invalid choice. Please enter a number 1 to 7.")
 
         except ConnectionRefusedError:
-
             print("Connection failed. Start library_server.py first.")
 
+        except EOFError:
+            print("Lost connection to the server. Please restart the server and try again.")
+            
         except Exception as error:
-
             print(f"An error occurred: {error}")
 
         finally:
-
             if connection is not None:
-
                 connection.close()
-
                 print("Connection closed.")
-
 
 def main():
 
