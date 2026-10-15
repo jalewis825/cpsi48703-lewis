@@ -217,7 +217,7 @@ class LibraryListService(rpyc.Service):
     # Checks out an available book to a valid student, holding the lock during the update.
     def exposed_borrow_book(self, student_id, book_id):
         student_id = student_id.strip().upper()
-        book_id = book_id.strip().upper()
+        book_id = book_id.strip().capitalize()
 
         if not self.is_valid_student_id(student_id):
            return {
