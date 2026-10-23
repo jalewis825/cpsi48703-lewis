@@ -1,6 +1,12 @@
 """
 library_client.py
 
+Assignment 3.1: Distributed Library Management System - RPC
+
+Author: Jessi Lewis
+Course: CPSI 48703-9S1 - Distributed Computing
+Date: 14-OCT-2026
+
 Menu-driven RPC client for the Distributed Library Management System
 (Assignment 3.1). Connects to the library server using the RPyC library
 and calls its remote procedures based on user input. The client never

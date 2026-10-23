@@ -1,6 +1,12 @@
 """
 library_server.py
 
+Assignment 3.1: Distributed Library Management System - RPC
+
+Author: Jessi Lewis
+Course: CPSI 48703-9S1 - Distributed Computing
+Date: 14-OCT-2026
+
 RPC server for the Distributed Library Management System (Assignment 3.1).
 Maintains the shared book inventory and exposes six remote procedures
 (display, search, check availability, borrow, return, view borrowed books)
